@@ -6,25 +6,40 @@
 package com.pramesh.filter;
 
 import java.io.IOException;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.ext.Provider;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
  * @author prames
  */
-@Provider
-public class HttpFilter implements ContainerResponseFilter {
+@WebFilter(filterName = "HttpFilter", urlPatterns = "/*")
+public class HttpFilter implements Filter {
 
     @Override
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        System.out.println(">>>>> api is being invoked .....");
-        requestContext.getHeaders().add("Access-Control-Allow-Origin", "*");
-        requestContext.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
-        requestContext.getHeaders().add("Access-Control-Allow-Credentials", "true");
-        requestContext.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+    public void init(FilterConfig filterConfig) throws ServletException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        System.out.println(">>> requesting response >>>");
+        HttpServletResponse res = (HttpServletResponse) response;
+        res.addHeader("Access-Control-Allow-Origin", "*");
+        res.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+        res.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        chain.doFilter(request, response);
+    }
+
+    @Override
+    public void destroy() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
